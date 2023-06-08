@@ -2,16 +2,11 @@ import { AxiosError, AxiosResponse } from "axios";
 
 type Status = "SUCCESS" | "FAILED";
 
-interface ErrorResponse {
-  msg: string;
-  status: Status;
-}
-
-interface SuccessResponse<T> {
+export interface ApiResponse<T = any> {
   msg: T;
   status: Status;
 }
 
-export type ApiSuccessResponse<T> = AxiosResponse<SuccessResponse<T>>;
+export type ApiSuccessResponse<T> = AxiosResponse<ApiResponse<T>>;
 
-export type ApiErrorResponse = AxiosError<ErrorResponse>;
+export type ApiErrorResponse = AxiosError<ApiResponse<String>>;

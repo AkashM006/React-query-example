@@ -1,36 +1,16 @@
 import { getNotes } from "../../api/notes";
 import Card from "./Card";
 import "./CardList.scss";
-import { useQuery } from "@tanstack/react-query";
+import { UseQueryResult, useQuery } from "@tanstack/react-query";
 import { Note } from "../../types/data";
-import { ApiErrorResponse, ApiSuccessResponse } from "../../types/Response";
-import { useState } from "react";
+import { ApiErrorResponse, ApiResponse } from "../../types/Response";
 
 function CardList() {
-  const [poll, setPoll] = useState(true);
-
-  const { refetch, isFetching } = useQuery<ApiSuccessResponse<Note[]>>(
-    ["notes"],
-    getNotes,
-    {
-      enabled: false,
-      // refetchInterval: poll === true ? 5 * 1000 : false,
-      // refetchInterval: 5000,
-      onSuccess: (data) => {
-        const length = data.data.msg.length;
-        console.log("Notes Length: ", length);
-        if (length > 1) {
-          console.log("Stopping polling");
-          setPoll(false);
-        }
-      },
-      onError: (error) => {
-        let responseError = error as ApiErrorResponse;
-        console.log("Error: ", responseError.response?.data.msg);
-        setPoll(false);
-      },
-    }
-  );
+  const { refetch, isFetching } = useQuery(["notes"], getNotes, {
+    enabled: false,
+    // refetchInterval: poll === true ? 5 * 1000 : false,
+    // refetchInterval: 5000,
+  });
 
   return (
     <div className="card__container">
@@ -43,7 +23,21 @@ function CardList() {
 }
 
 const QueryHandler = () => {
-  const notesQuery = useQuery<ApiSuccessResponse<Note[]>>(["notes"], getNotes);
+  const notesQuery: UseQueryResult<
+    ApiResponse<Note[]>,
+    ApiErrorResponse
+  > = useQuery(["notes"], getNotes, {
+    onSuccess: (data) => {
+      console.log("Notes: ", data.msg);
+    },
+    onError: (error) => {
+      console.log("Error: ", error.response?.data.msg);
+    },
+    select(data) {
+      return data.data;
+    },
+    // refetchInterval: poll ? 5000 : false
+  });
 
   const error = notesQuery.error as ApiErrorResponse;
 
@@ -55,7 +49,7 @@ const QueryHandler = () => {
 
   return (
     <>
-      {data.data.msg.map((note) => (
+      {data.msg.map((note) => (
         <Card key={note.id} title={note.title} body={note.body} />
       ))}
     </>
