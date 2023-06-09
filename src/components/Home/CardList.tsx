@@ -27,7 +27,7 @@ const QueryHandler = () => {
 
   return (
     <>
-      {data.msg.map((note) => (
+      {data.map((note) => (
         <Card key={note.id} id={note.id} title={note.title} body={note.body} />
       ))}
     </>

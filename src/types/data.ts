@@ -1,5 +1,5 @@
 import { UseQueryResult } from "@tanstack/react-query";
-import { ApiErrorResponse, ApiResponse } from "./Response";
+import { ApiErrorResponse } from "./Response";
 
 export interface Note {
   id: string;
@@ -9,7 +9,4 @@ export interface Note {
   updated_at: Date;
 }
 
-export type CustomQueryHook<T> = UseQueryResult<
-  ApiResponse<T>,
-  ApiErrorResponse
->;
+export type CustomQueryHook<T> = UseQueryResult<T, ApiErrorResponse>;
