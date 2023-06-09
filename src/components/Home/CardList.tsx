@@ -4,12 +4,6 @@ import "./CardList.scss";
 import useNotes from "../../hooks/useNotes";
 
 function CardList() {
-  // const { refetch, isFetching } = useQuery(["notes"], getNotes, {
-  // enabled: false,
-  // refetchInterval: poll === true ? 5 * 1000 : false,
-  // refetchInterval: 5000,
-  // });
-
   const { refetch, isFetching } = useNotes();
 
   return (
@@ -34,7 +28,7 @@ const QueryHandler = () => {
   return (
     <>
       {data.msg.map((note) => (
-        <Card key={note.id} title={note.title} body={note.body} />
+        <Card key={note.id} id={note.id} title={note.title} body={note.body} />
       ))}
     </>
   );

@@ -7,4 +7,8 @@ const getNotes = () => {
   return axios.get<ApiResponse>("/notes");
 };
 
-export { getNotes };
+const getNote = (noteId: string) => {
+  return axios.get<ApiResponse>(`/notes/${noteId}`);
+};
+
+export { getNotes, getNote };

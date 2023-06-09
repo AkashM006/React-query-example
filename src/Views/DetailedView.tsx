@@ -1,5 +1,7 @@
+import Form from "../components/Detailed/Form";
+
 function DetailedView() {
-  return <div>DetailedView</div>;
+  return <Form />;
 }
 
 export default DetailedView;
