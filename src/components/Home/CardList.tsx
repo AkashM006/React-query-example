@@ -1,16 +1,16 @@
 import { getNotes } from "../../api/notes";
 import Card from "./Card";
 import "./CardList.scss";
-import { UseQueryResult, useQuery } from "@tanstack/react-query";
-import { Note } from "../../types/data";
-import { ApiErrorResponse, ApiResponse } from "../../types/Response";
+import useNotes from "../../hooks/useNotes";
 
 function CardList() {
-  const { refetch, isFetching } = useQuery(["notes"], getNotes, {
-    enabled: false,
-    // refetchInterval: poll === true ? 5 * 1000 : false,
-    // refetchInterval: 5000,
-  });
+  // const { refetch, isFetching } = useQuery(["notes"], getNotes, {
+  // enabled: false,
+  // refetchInterval: poll === true ? 5 * 1000 : false,
+  // refetchInterval: 5000,
+  // });
+
+  const { refetch, isFetching } = useNotes();
 
   return (
     <div className="card__container">
@@ -23,25 +23,9 @@ function CardList() {
 }
 
 const QueryHandler = () => {
-  const notesQuery: UseQueryResult<
-    ApiResponse<Note[]>,
-    ApiErrorResponse
-  > = useQuery(["notes"], getNotes, {
-    onSuccess: (data) => {
-      console.log("Notes: ", data.msg);
-    },
-    onError: (error) => {
-      console.log("Error: ", error.response?.data.msg);
-    },
-    select(data) {
-      return data.data;
-    },
-    // refetchInterval: poll ? 5000 : false
-  });
+  const notesQuery = useNotes();
 
-  const error = notesQuery.error as ApiErrorResponse;
-
-  const { status, data } = notesQuery;
+  const { status, data, error } = notesQuery;
 
   if (status === "error") {
     return <h3>{error.response?.data?.msg}</h3>;

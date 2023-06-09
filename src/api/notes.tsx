@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { ApiResponse } from "../types/Response";
 
 axios.defaults.baseURL = "http://localhost:3000";
