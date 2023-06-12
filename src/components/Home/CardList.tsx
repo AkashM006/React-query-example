@@ -23,6 +23,8 @@ const QueryHandler = () => {
 
   if (isLoading) return <h1>Loading...</h1>;
 
+  if (error) return <h3>{error.response?.data.msg}</h3>;
+
   return (
     <div className="cardlist__container">
       {data?.pages.map((group) => {

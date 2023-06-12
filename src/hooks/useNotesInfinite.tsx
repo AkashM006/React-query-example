@@ -4,13 +4,14 @@ import {
 } from "@tanstack/react-query";
 import { getNotes } from "../api/notes";
 import { Note } from "../types/data";
+import { ApiErrorResponse } from "../types/Response";
 
 type List = {
   count: number;
   data: Note[];
 };
 
-function useNotesInfinite(): UseInfiniteQueryResult<List> {
+function useNotesInfinite(): UseInfiniteQueryResult<List, ApiErrorResponse> {
   return useInfiniteQuery(
     ["notes"],
     ({ pageParam = 1 }) => getNotes(pageParam),
