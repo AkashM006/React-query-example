@@ -3,8 +3,10 @@ import { ApiResponse } from "../types/Response";
 
 axios.defaults.baseURL = "http://localhost:3000";
 
-const getNotes = () => {
-  return axios.get<ApiResponse>("/notes").then((res) => res.data.msg);
+const getNotes = (page: number) => {
+  return axios
+    .get<ApiResponse>(`/notes?limit=5&page=${page}`)
+    .then((res) => res.data.msg);
 };
 
 const getNote = (noteId: string) => {
