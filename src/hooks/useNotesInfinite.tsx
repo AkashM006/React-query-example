@@ -15,7 +15,7 @@ function useNotesInfinite(): UseInfiniteQueryResult<List> {
     ["notes"],
     ({ pageParam = 1 }) => getNotes(pageParam),
     {
-      getNextPageParam: (lastPage, pages) => {
+      getNextPageParam: (_lastPage, pages) => {
         if (pages[0].count >= pages.length * 5) {
           return pages.length + 1;
         }

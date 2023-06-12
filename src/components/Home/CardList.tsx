@@ -23,8 +23,6 @@ const QueryHandler = () => {
 
   if (isLoading) return <h1>Loading...</h1>;
 
-  console.log("Has next: ", { hasNextPage, isFetchingNextPage });
-
   return (
     <div className="cardlist__container">
       {data?.pages.map((group) => {
