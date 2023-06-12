@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ApiResponse } from "../types/Response";
+import { NoteRequest } from "../types/data";
 
 axios.defaults.baseURL = "http://localhost:3000";
 
@@ -13,4 +14,8 @@ const getNote = (noteId: string) => {
   return axios.get<ApiResponse>(`/notes/${noteId}`).then((res) => res.data.msg);
 };
 
-export { getNotes, getNote };
+const createNote = (note: NoteRequest) => {
+  return axios.post<ApiResponse>(`/notes`, note).then((res) => res.data.msg);
+};
+
+export { getNotes, getNote, createNote };

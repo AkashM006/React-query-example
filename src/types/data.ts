@@ -9,4 +9,9 @@ export interface Note {
   updated_at: Date;
 }
 
+export interface NoteRequest {
+  title: string;
+  body: string;
+}
+
 export type CustomQueryHook<T> = UseQueryResult<T, ApiErrorResponse>;

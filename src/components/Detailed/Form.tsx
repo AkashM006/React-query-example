@@ -11,7 +11,6 @@ function Form() {
 
   if (status === "loading") return <h1>Loading...</h1>;
   else if (status === "error") {
-    console.log("Error: ", error);
     return <h3>Error: {error.response?.data.msg}</h3>;
   }
 

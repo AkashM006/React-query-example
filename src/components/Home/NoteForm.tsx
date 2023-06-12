@@ -1,13 +1,19 @@
+import useAddNote from "../../hooks/useAddNote";
 import "./NoteForm.scss";
 import { useState } from "react";
 
 function NoteForm() {
   const submitHandler = () => {
-    console.log("Submitted");
+    mutate({
+      body,
+      title,
+    });
   };
 
   const [title, setTitle] = useState<string>("");
   const [body, setBody] = useState<string>("");
+
+  const { mutate } = useAddNote();
 
   return (
     <>

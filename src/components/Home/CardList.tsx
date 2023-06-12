@@ -42,7 +42,6 @@ const QueryHandler = () => {
           <button
             disabled={isFetchingNextPage}
             onClick={() => {
-              console.log("here");
               fetchNextPage();
             }}
           >

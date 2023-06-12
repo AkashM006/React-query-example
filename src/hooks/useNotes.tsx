@@ -9,9 +9,7 @@ interface Props {
 
 function useNotes(props: Props): CustomQueryHook<Note[]> {
   return useQuery(["notes", props.page], () => getNotes(props.page), {
-    onError: (error) => {
-      console.log("Error: ", error.response?.data.msg);
-    },
+    onError: (error) => {},
     enabled: props?.enabled,
     keepPreviousData: true,
   });
