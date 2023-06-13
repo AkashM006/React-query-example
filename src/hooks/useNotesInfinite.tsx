@@ -13,7 +13,7 @@ type List = {
 
 function useNotesInfinite(): UseInfiniteQueryResult<List, ApiErrorResponse> {
   return useInfiniteQuery(
-    ["notes"],
+    ["notes-infinite"],
     ({ pageParam = 1 }) => getNotes(pageParam),
     {
       getNextPageParam: (_lastPage, pages) => {

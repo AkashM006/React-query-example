@@ -1,47 +1,85 @@
+import { useQueryClient } from "@tanstack/react-query";
 import useAddNote from "../../hooks/useAddNote";
 import "./NoteForm.scss";
-import { useState } from "react";
+import { toast } from "react-toastify";
+import { Formik, FormikHelpers } from "formik";
+import noteSchema from "../../validation/noteForm";
+import { NoteRequest } from "../../types/data";
+import FormField from "../Common/FormField";
 
 function NoteForm() {
-  const submitHandler = () => {
-    mutate({
-      body,
-      title,
+  const submitHandler = async (
+    values: NoteRequest,
+    formikHelpers: FormikHelpers<NoteRequest>
+  ) => {
+    formikHelpers.setSubmitting(true);
+    mutate(values, {
+      onSuccess: () => {
+        formikHelpers.setSubmitting(false);
+      },
     });
   };
 
-  const [title, setTitle] = useState<string>("");
-  const [body, setBody] = useState<string>("");
+  const queryClient = useQueryClient();
+  const { mutate, isLoading, isError, error } = useAddNote({
+    onSuccess: () => {
+      queryClient.invalidateQueries(["notes-infinite"]);
+      toast.success("Note has been created", {
+        position: toast.POSITION.BOTTOM_CENTER,
+      });
+    },
+  });
 
-  const { mutate } = useAddNote();
+  const values: NoteRequest = {
+    title: "",
+    body: "",
+  };
 
   return (
     <>
-      <div className="form__container">
-        <h2>Add new Note</h2>
-        <div className="form-group">
-          <label htmlFor="title">Title: </label>
-          <input
-            type="text"
-            name="title"
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            id="title"
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="body">Body: </label>
-          <input
-            type="text"
-            name="body"
-            value={body}
-            onChange={(event) => setBody(event.target.value)}
-            id="body"
-          />
-        </div>
-        <button onClick={submitHandler}>Create new Note</button>
-        <hr />
-      </div>
+      <Formik
+        initialValues={values}
+        validationSchema={noteSchema}
+        onSubmit={submitHandler}
+      >
+        {(formik) => {
+          return (
+            <form onSubmit={formik.handleSubmit}>
+              <div className="form__container">
+                <h2>Add new Note</h2>
+                {
+                  (Object.keys(values) as Array<keyof NoteRequest>).map(
+                    (item) => (
+                      <FormField
+                        fieldName={item}
+                        formik={formik}
+                        isLoading={isLoading}
+                        key={item}
+                      />
+                    )
+                  )
+                  // keys.map((item: keyof typeof values))
+                }
+                {/* <FormField
+                  fieldName="title"
+                  formik={formik}
+                  isLoading={isLoading}
+                />
+                <FormField
+                  fieldName="body"
+                  formik={formik}
+                  isLoading={isLoading}
+                /> */}
+                <button disabled={isLoading} type="submit">
+                  {isLoading ? "Loading..." : "Create new Note"}
+                </button>
+                {isError && <p>Error</p>}
+                <hr />
+              </div>
+            </form>
+          );
+        }}
+      </Formik>
     </>
   );
 }

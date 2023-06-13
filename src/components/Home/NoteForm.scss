@@ -8,8 +8,9 @@
 
 .form-group {
   display: flex;
-  align-items: center;
+  justify-content: center;
   margin-block: 2em;
+  flex-direction: column;
 }
 
 input {
@@ -36,4 +37,13 @@ hr {
   margin-top: 2.5rem;
   border: 0;
   border-top: 1px solid darkgrey;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+}
+
+.title {
+  text-transform: capitalize;
 }
