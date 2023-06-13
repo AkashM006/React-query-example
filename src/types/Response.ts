@@ -7,6 +7,15 @@ export interface ApiResponse<T = any> {
   status: Status;
 }
 
+type ValidationError = {
+  path: string;
+  message: string;
+};
+
 export type ApiSuccessResponse<T> = AxiosResponse<ApiResponse<T>>;
 
 export type ApiErrorResponse = AxiosError<ApiResponse<String>>;
+
+export type ApiValidationErrorResponse = AxiosError<
+  ApiResponse<ValidationError[]>
+>;

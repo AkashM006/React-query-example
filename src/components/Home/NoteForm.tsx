@@ -6,6 +6,8 @@ import { Formik, FormikHelpers } from "formik";
 import noteSchema from "../../validation/noteForm";
 import { NoteRequest } from "../../types/data";
 import FormField from "../Common/FormField";
+import { ApiValidationErrorResponse } from "../../types/Response";
+import toastOptions from "../../utils/toast";
 
 function NoteForm() {
   const submitHandler = async (
@@ -17,6 +19,14 @@ function NoteForm() {
       onSuccess: () => {
         formikHelpers.setSubmitting(false);
       },
+      onError: (error) => {
+        if (error.response?.data.msg instanceof Array) {
+          let errors = error as ApiValidationErrorResponse;
+          errors?.response?.data.msg.map((errorItem) => {
+            formikHelpers.setFieldError(errorItem.path, errorItem.message);
+          });
+        }
+      },
     });
   };
 
@@ -24,11 +34,14 @@ function NoteForm() {
   const { mutate, isLoading, isError, error } = useAddNote({
     onSuccess: () => {
       queryClient.invalidateQueries(["notes-infinite"]);
-      toast.success("Note has been created", {
-        position: toast.POSITION.BOTTOM_CENTER,
-      });
+      toast.success("Note has been created", toastOptions);
     },
   });
+
+  if (error && error.response?.data.msg instanceof String)
+    toast.error(error.response?.data.msg);
+
+  const errorMessage = error?.response?.data.msg;
 
   const values: NoteRequest = {
     title: "",
@@ -47,33 +60,22 @@ function NoteForm() {
             <form onSubmit={formik.handleSubmit}>
               <div className="form__container">
                 <h2>Add new Note</h2>
-                {
-                  (Object.keys(values) as Array<keyof NoteRequest>).map(
-                    (item) => (
-                      <FormField
-                        fieldName={item}
-                        formik={formik}
-                        isLoading={isLoading}
-                        key={item}
-                      />
-                    )
+                {(Object.keys(values) as Array<keyof NoteRequest>).map(
+                  (item) => (
+                    <FormField
+                      fieldName={item}
+                      formik={formik}
+                      isLoading={isLoading}
+                      key={item}
+                    />
                   )
-                  // keys.map((item: keyof typeof values))
-                }
-                {/* <FormField
-                  fieldName="title"
-                  formik={formik}
-                  isLoading={isLoading}
-                />
-                <FormField
-                  fieldName="body"
-                  formik={formik}
-                  isLoading={isLoading}
-                /> */}
+                )}
                 <button disabled={isLoading} type="submit">
                   {isLoading ? "Loading..." : "Create new Note"}
                 </button>
-                {isError && <p>Error</p>}
+                {isError && errorMessage instanceof String && (
+                  <p className="error">{errorMessage}</p>
+                )}
                 <hr />
               </div>
             </form>
