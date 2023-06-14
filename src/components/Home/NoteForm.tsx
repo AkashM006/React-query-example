@@ -33,7 +33,7 @@ function NoteForm() {
   const queryClient = useQueryClient();
   const { mutate, isLoading, isError, error } = useAddNote({
     onSuccess: () => {
-      queryClient.invalidateQueries(["notes-infinite"]);
+      // queryClient.invalidateQueries(["notes-infinite"]);
       toast.success("Note has been created", toastOptions);
     },
   });

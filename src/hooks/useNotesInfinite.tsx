@@ -6,7 +6,7 @@ import { getNotes } from "../api/notes";
 import { Note } from "../types/data";
 import { ApiErrorResponse } from "../types/Response";
 
-type List = {
+export type List = {
   count: number;
   data: Note[];
 };
