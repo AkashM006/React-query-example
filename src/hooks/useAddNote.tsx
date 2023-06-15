@@ -2,8 +2,6 @@ import {
   UseMutationResult,
   useMutation,
   useQueryClient,
-  QueryCache,
-  UseInfiniteQueryResult,
   InfiniteData,
 } from "@tanstack/react-query";
 import { createNote } from "../api/notes";
@@ -33,14 +31,48 @@ function useAddNote(
     ApiErrorResponse | ApiValidationErrorResponse,
     NoteRequest
   >(createNote, {
-    onSuccess: (data) => {
-      if (props?.onSuccess) props?.onSuccess(data);
+    // onSuccess: (data) => {
+    //   if (props?.onSuccess) props?.onSuccess(data);
 
+    //   queryClient.setQueryData(["notes-infinite"], (oldQuery: any) => {
+    //   let prevData = oldQuery as InfiniteData<List>;
+    //   let pages = prevData.pages;
+    //   let initialCount = 1;
+
+    //   let result = pages.map((page) => {
+    //     if (page.data.length === 5) {
+    //       initialCount = page.count + 1;
+    //       return {
+    //         count: initialCount,
+    //         data: [...page.data],
+    //       };
+    //     }
+    //     initialCount = page.count + 1;
+    //     return {
+    //       count: initialCount,
+    //       data: [...page.data, data],
+    //     };
+    //   });
+
+    //   return {
+    //     ...prevData,
+    //     pages: [...result],
+    //   };
+    // });
+    // },
+    onMutate: async (data) => {
+      await queryClient.cancelQueries();
+      const previousData = queryClient.getQueryData(["notes-infinite"]);
+      const newData = {
+        ...data,
+        id: Math.random().toString(),
+        created_at: Date.now(),
+        updated_at: Date.now(),
+      };
       queryClient.setQueryData(["notes-infinite"], (oldQuery: any) => {
         let prevData = oldQuery as InfiniteData<List>;
         let pages = prevData.pages;
         let initialCount = 1;
-        let replaced = false;
 
         let result = pages.map((page) => {
           if (page.data.length === 5) {
@@ -50,11 +82,10 @@ function useAddNote(
               data: [...page.data],
             };
           }
-          replaced = true;
           initialCount = page.count + 1;
           return {
             count: initialCount,
-            data: [...page.data, data],
+            data: [...page.data, newData],
           };
         });
 
@@ -63,8 +94,19 @@ function useAddNote(
           pages: [...result],
         };
       });
+      return {
+        previousData,
+      };
     },
-    onError: props?.onError,
+    // onError: props?.onError,
+    onError: (_error, _data, context: any) => {
+      queryClient.setQueryData(["notes-infinite"], context.previousData);
+      console.log("On error in useInfiniteQuery hook of add note");
+      if (props?.onError) props.onError();
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(["notes-infinite"]);
+    },
   });
 }
 

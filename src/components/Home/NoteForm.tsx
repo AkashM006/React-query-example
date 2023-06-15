@@ -16,9 +16,6 @@ function NoteForm() {
   ) => {
     formikHelpers.setSubmitting(true);
     mutate(values, {
-      onSuccess: () => {
-        formikHelpers.setSubmitting(false);
-      },
       onError: (error) => {
         if (error.response?.data.msg instanceof Array) {
           let errors = error as ApiValidationErrorResponse;
@@ -26,6 +23,9 @@ function NoteForm() {
             formikHelpers.setFieldError(errorItem.path, errorItem.message);
           });
         }
+      },
+      onSettled: () => {
+        formikHelpers.setSubmitting(false);
       },
     });
   };
